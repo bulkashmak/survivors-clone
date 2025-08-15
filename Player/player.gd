@@ -3,8 +3,27 @@ extends CharacterBody2D
 var movement_speed: float = 40.0 # pixels
 var hp = 80
 
+# Attacks
+var ice_spear = preload("res://Player/Attack/ice_spear.tscn")
+
+# AttackNodes
+@onready var ice_spear_timer: Timer = get_node("%IceSpearTimer")
+@onready var ice_spear_attack_timer: Timer = get_node("%IceSpearAttackTimer")
+
+# IceSpear
+var icespear_ammo = 0
+var icespear_baseammo = 1
+var icespear_attackspeed = 1.5
+var icespear_level = 1
+
+# Enemy Related
+var enemy_close = []
+
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var walk_timer: Timer = get_node("%WalkTimer")
+
+func _ready() -> void:
+	attack()
 
 func _physics_process(delta: float) -> void: # runs every 1/60 seconds
 	movement()
@@ -49,7 +68,43 @@ func movement() -> void:
 	
 	move_and_slide()
 
+func attack() -> void:
+	if icespear_level > 0:
+		ice_spear_timer.wait_time = icespear_attackspeed # set reload timer to attack speed
+		if ice_spear_timer.is_stopped(): # start the reload timer if it's stopped
+			ice_spear_timer.start()
 
 func _on_hurt_box_hurt(damage: Variant) -> void:
 	hp -= damage
 	print(hp)
+
+func _on_ice_spear_timer_timeout() -> void:
+	icespear_ammo += icespear_baseammo # load the ammo
+	ice_spear_attack_timer.start() # start the attack
+
+func _on_ice_spear_attack_timer_timeout() -> void:
+	if icespear_ammo > 0:
+		var icespear_attack: Node = ice_spear.instantiate()
+		icespear_attack.position = position
+		icespear_attack.target = get_random_target()
+		icespear_attack.level = icespear_level
+		add_child(icespear_attack)
+		icespear_ammo -= 1
+		if icespear_ammo > 0:
+			ice_spear_attack_timer.start()
+		else:
+			ice_spear_attack_timer.stop()
+
+func get_random_target() -> Vector2:
+	if enemy_close.size() > 0:
+		return enemy_close.pick_random().global_position
+	else:
+		return Vector2.UP
+
+func _on_enemy_detection_area_body_entered(body: Node2D) -> void:
+	if not enemy_close.has(body):
+		enemy_close.append(body)
+
+func _on_enemy_detection_area_body_exited(body: Node2D) -> void:
+	if enemy_close.has(body):
+		enemy_close.erase(body)
