@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 var movement_speed: float = 40.0 # pixels
+var hp = 80
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var walk_timer: Timer = get_node("%WalkTimer")
@@ -47,3 +48,8 @@ func movement() -> void:
 	# To avoid this, we should use Vector2.normalized()
 	
 	move_and_slide()
+
+
+func _on_hurt_box_hurt(damage: Variant) -> void:
+	hp -= damage
+	print(hp)

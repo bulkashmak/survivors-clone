@@ -1,10 +1,10 @@
 extends CharacterBody2D
 
 @export var movement_speed: float = 20.0 # exports the variable to the editor
+@export var hp = 10
 
-# Gets the first node in group 'player' from the global node tree
-@onready var player: CharacterBody2D = get_tree().get_first_node_in_group("player")
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var player: CharacterBody2D = get_tree().get_first_node_in_group("player") # reference of the first node in group 'player' from the global node tree
+@onready var sprite: Sprite2D = $Sprite2D # reference of a node with a given name
 @onready var animation: AnimationPlayer = $AnimationPlayer
 
 func _ready() -> void:
@@ -23,3 +23,9 @@ func _physics_process(_delta: float) -> void:
 		sprite.flip_h = false
 	
 	move_and_slide()
+
+
+func _on_hurt_box_hurt(damage: Variant) -> void:
+	hp -= damage
+	if hp <= 0:
+		queue_free()
