@@ -15,7 +15,7 @@ func _on_timer_timeout() -> void:
 				spawn.spawn_delay_counter += 1 # increase coutner by 1 for next time
 			else:
 				spawn.spawn_delay_counter = 0 # reset delay counter
-				var new_enemy: Resource = load(spawn.enemy.resource_path) # load in the resourece
+				var new_enemy: Resource = spawn.enemy
 				var counter = 0
 				while counter < spawn.enemy_num:
 					var enemy_spawn = new_enemy.instantiate() # create instance of packed scene
