@@ -1,0 +1,63 @@
+[gd_scene load_steps=7 format=3 uid="uid://dipu5ko3ncgdu"]
+
+[ext_resource type="Texture2D" uid="uid://cfj71lfnt61dx" path="res://Textures/Enemy/kolbold_weak.png" id="1_2pb1h"]
+[ext_resource type="Script" uid="uid://cws0nxn0871hs" path="res://Enemy/enemy.gd" id="1_px1sc"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_px1sc"]
+radius = 5.0
+height = 20.0
+
+[sub_resource type="Animation" id="Animation_px1sc"]
+resource_name = "walk"
+length = 0.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [0, 1, 0]
+}
+
+[sub_resource type="Animation" id="Animation_am0pq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_am0pq"]
+_data = {
+&"RESET": SubResource("Animation_am0pq"),
+&"walk": SubResource("Animation_px1sc")
+}
+
+[node name="EnemyKolboldWeak" type="CharacterBody2D"]
+motion_mode = 1
+script = ExtResource("1_px1sc")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_2pb1h")
+hframes = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 2)
+shape = SubResource("CapsuleShape2D_px1sc")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_am0pq")
+}
