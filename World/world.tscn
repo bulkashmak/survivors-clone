@@ -1,8 +1,28 @@
-[gd_scene load_steps=4 format=3 uid="uid://c3bvp87jo630u"]
+[gd_scene load_steps=8 format=3 uid="uid://c3bvp87jo630u"]
 
 [ext_resource type="Texture2D" uid="uid://dcqqur4y6t6hi" path="res://Textures/dirt_full_new.png" id="1_62w18"]
 [ext_resource type="PackedScene" uid="uid://lt5xpda6uwk1" path="res://Player/player.tscn" id="2_8a836"]
-[ext_resource type="PackedScene" uid="uid://dipu5ko3ncgdu" path="res://Enemy/enemy.tscn" id="3_j8job"]
+[ext_resource type="PackedScene" uid="uid://bdna305n27ara" path="res://Utility/enemy_spawner.tscn" id="3_j8job"]
+[ext_resource type="Script" uid="uid://dg0mvw5hvg335" path="res://Utility/spawn_info.gd" id="4_k8do8"]
+[ext_resource type="PackedScene" uid="uid://dipu5ko3ncgdu" path="res://Enemy/enemy.tscn" id="5_bkhv4"]
+
+[sub_resource type="Resource" id="Resource_yf0ba"]
+script = ExtResource("4_k8do8")
+time_start = 0
+time_end = 5
+enemy = ExtResource("5_bkhv4")
+enemy_num = 1
+enemy_spawn_delay = 0
+metadata/_custom_type_script = "uid://dg0mvw5hvg335"
+
+[sub_resource type="Resource" id="Resource_eidgh"]
+script = ExtResource("4_k8do8")
+time_start = 5
+time_end = 60
+enemy = ExtResource("5_bkhv4")
+enemy_num = 10
+enemy_spawn_delay = 0
+metadata/_custom_type_script = "uid://dg0mvw5hvg335"
 
 [node name="World" type="Node2D"]
 
@@ -15,5 +35,5 @@ region_rect = Rect2(0, 0, 4000, 4000)
 
 [node name="Player" parent="." instance=ExtResource("2_8a836")]
 
-[node name="EnemyKoboldWeak" parent="." instance=ExtResource("3_j8job")]
-position = Vector2(209, 62)
+[node name="EnemySpawner" parent="." instance=ExtResource("3_j8job")]
+spawns = Array[ExtResource("4_k8do8")]([SubResource("Resource_yf0ba"), SubResource("Resource_eidgh")])
