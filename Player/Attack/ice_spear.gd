@@ -1,10 +1,12 @@
 extends Area2D
 
+signal remove_from_array(object)
+
 var level = 1
 var hp = 1
 var speed = 100
 var damage = 5
-var knock_amount = 100
+var knockback_amount = 100
 var attack_size = 1.0
 
 var target = Vector2.ZERO
@@ -24,7 +26,7 @@ func _ready() -> void:
 			hp = 1
 			speed = 100
 			damage = 5
-			knock_amount = 100
+			knockback_amount = 100
 			attack_size = 1.0
 	
 	# Tweens is a way to alternate node's properties in an animated like fashion
@@ -45,7 +47,9 @@ func _physics_process(delta: float) -> void:
 func enemy_hit(charge = 1) -> void: # get's called every time icespear hits an enemy
 	hp -= charge
 	if hp <= 0:
+		emit_signal("remove_from_array", self)
 		queue_free()
 
 func _on_timer_timeout() -> void:
+	emit_signal("remove_from_array", self)
 	queue_free() # delete ice spear after a timer times out

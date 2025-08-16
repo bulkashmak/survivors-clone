@@ -74,7 +74,7 @@ func attack() -> void:
 		if ice_spear_timer.is_stopped(): # start the reload timer if it's stopped
 			ice_spear_timer.start()
 
-func _on_hurt_box_hurt(damage: Variant) -> void:
+func _on_hurt_box_hurt(damage: Variant, _angle, _knockback) -> void:
 	hp -= damage
 	print(hp)
 
