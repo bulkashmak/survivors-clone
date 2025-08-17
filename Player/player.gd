@@ -2,19 +2,29 @@ extends CharacterBody2D
 
 var movement_speed: float = 40.0 # pixels
 var hp = 80
+var last_movement = Vector2.UP
 
 # Attacks
 var ice_spear = preload("res://Player/Attack/ice_spear.tscn")
+var tornado = preload("res://Player/Attack/tornado.tscn")
 
 # AttackNodes
 @onready var ice_spear_timer: Timer = get_node("%IceSpearTimer")
 @onready var ice_spear_attack_timer: Timer = get_node("%IceSpearAttackTimer")
+@onready var tornado_timer: Timer = get_node("%TornadoTimer")
+@onready var tornado_attack_timer: Timer = get_node("%TornadoAttackTimer")
 
 # IceSpear
 var icespear_ammo = 0
 var icespear_baseammo = 1
 var icespear_attackspeed = 1.5
-var icespear_level = 1
+var icespear_level = 0
+
+# Tornado
+var tornado_ammo = 0
+var tornado_baseammo = 1
+var tornado_attackspeed = 3
+var tornado_level = 1
 
 # Enemy Related
 var enemy_close = []
@@ -49,6 +59,7 @@ func movement() -> void:
 	# Walking animation
 	# Vector2.ZERO is {0, 0}, in this case means that player is not moving
 	if mov != Vector2.ZERO:
+		last_movement = mov
 		if walk_timer.is_stopped():
 			if sprite.frame >= sprite.hframes - 1:
 				sprite.frame = 0
@@ -73,6 +84,10 @@ func attack() -> void:
 		ice_spear_timer.wait_time = icespear_attackspeed # set reload timer to attack speed
 		if ice_spear_timer.is_stopped(): # start the reload timer if it's stopped
 			ice_spear_timer.start()
+	if tornado_level > 0:
+		tornado_timer.wait_time = tornado_attackspeed # set reload timer to attack speed
+		if tornado_timer.is_stopped(): # start the reload timer if it's stopped
+			tornado_timer.start()
 
 func _on_hurt_box_hurt(damage: Variant, _angle, _knockback) -> void:
 	hp -= damage
@@ -94,6 +109,23 @@ func _on_ice_spear_attack_timer_timeout() -> void:
 			ice_spear_attack_timer.start()
 		else:
 			ice_spear_attack_timer.stop()
+
+func _on_tornado_timer_timeout() -> void:
+	tornado_ammo += tornado_baseammo # load the ammo
+	tornado_attack_timer.start() # start the attack
+
+func _on_tornado_attack_timer_timeout() -> void:
+	if tornado_ammo > 0:
+		var tornado_attack: Node = tornado.instantiate()
+		tornado_attack.position = position
+		tornado_attack.last_movement = last_movement
+		tornado_attack.level = tornado_level
+		add_child(tornado_attack)
+		tornado_ammo -= 1
+		if tornado_ammo > 0:
+			tornado_attack_timer.start()
+		else:
+			tornado_attack_timer.stop()
 
 func get_random_target() -> Vector2:
 	if enemy_close.size() > 0:
