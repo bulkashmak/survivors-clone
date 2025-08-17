@@ -11,6 +11,9 @@ var knockback = Vector2.ZERO
 @onready var player: CharacterBody2D = get_tree().get_first_node_in_group("player") # reference of the first node in group 'player' from the global node tree
 @onready var sprite: Sprite2D = $Sprite2D # reference of a node with a given name
 @onready var animation: AnimationPlayer = $AnimationPlayer
+@onready var hit_sound: AudioStreamPlayer2D = $HitSound
+
+var death_animation: Resource = preload("res://Enemy/explosion.tscn")
 
 func _ready() -> void:
 	animation.play("walk")
@@ -31,10 +34,18 @@ func _physics_process(_delta: float) -> void:
 	
 	move_and_slide()
 
+func death() -> void:
+	emit_signal("remove_from_array", self)
+	var enemy_death = death_animation.instantiate()
+	enemy_death.scale = sprite.scale
+	enemy_death.global_position = global_position
+	get_parent().call_deferred("add_child", enemy_death)
+	queue_free()
 
 func _on_hurt_box_hurt(damage: Variant, angle, knockback_amount) -> void:
 	hp -= damage
 	knockback = angle * knockback_amount
 	if hp <= 0:
-		emit_signal("remove_from_array", self)
-		queue_free()
+		death()
+	else:
+		hit_sound.play() # if an enemy didn't die, play a hit sound
