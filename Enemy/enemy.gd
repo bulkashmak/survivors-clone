@@ -4,7 +4,7 @@ signal remove_from_array(object)
 
 @export var movement_speed: float = 20.0 # exports the variable to the editor
 @export var hp = 10
-@export var knockback_recovery = 3.5
+@export var knockback_recovery = 3.5 # increase this value to reduce knockback
 
 var knockback = Vector2.ZERO
 
@@ -19,12 +19,12 @@ func _ready() -> void:
 	animation.play("walk")
 
 func _physics_process(_delta: float) -> void:
-	knockback = knockback.move_toward(Vector2.ZERO, knockback_recovery)
+	knockback = knockback.move_toward(Vector2.ZERO, knockback_recovery) # reduce the knockback every frame
 	# CharacterBody2D.global_position adds up all position of parent nodes
 	# to get the global position in the world
 	var direction: Vector2 = global_position.direction_to(player.global_position)
 	velocity = movement_speed * direction
-	velocity += knockback
+	velocity += knockback # add the knockback force to the velocity
 	
 	# Turning animation
 	if direction.x > 0.1:
